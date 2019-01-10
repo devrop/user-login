@@ -12,6 +12,7 @@ public interface IUserLoginService {
 	public Map<String,Object> deactiveUserLogin(String idUser);
 	public Map<String,Object> findOneById(String idUser);
 	public Map<String,Object> login(UserLoginDto userLogin);
+	public Map<String,Object> createUserLogin(UserLoginDto userLogin);
 	
 
 }

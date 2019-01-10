@@ -163,4 +163,29 @@ public class UserLoginService implements IUserLoginService {
 		
 	}
 
+	@Override
+	public Map<String, Object> createUserLogin(UserLoginDto userLogin) {
+		// TODO Auto-generated method stub
+		Map<String,Object> mapData = new HashMap<String,Object>();
+		try{
+			UserLogin user = new UserLogin();
+			//String uuid = GeneratedUtil.generatedUUID();
+			user.setCreateBy(userLogin.getCreateBy());
+			user.setCreateDate(DateUtil.getNow());
+			//user.setIdUser(uuid);
+			user.setPassword(userLogin.getPassword());
+			user.setStatus(0);
+			user.setUsername(userLogin.getUsername());
+			userRepo.save(user);
+			return null;
+		}catch(Exception e){
+			String errorInService = "ERROR IN SERVICE " + e;
+			mapData.put("ERROR", errorInService);
+			return mapData;
+		}
+		
+		
+		
+	}
+
 }

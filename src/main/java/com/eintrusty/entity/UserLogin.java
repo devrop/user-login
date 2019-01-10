@@ -5,8 +5,11 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name="erc_user_login")
@@ -17,6 +20,8 @@ public class UserLogin implements Serializable{
 	 */
 	private static final long serialVersionUID = -8838383730964834737L;
 	@Id
+	@GeneratedValue(generator = "system-uuid")
+	@GenericGenerator(name = "system-uuid", strategy = "uuid2")
 	@Column(name="iduser")
 	private String idUser;
 	@Column(name="username")

@@ -20,7 +20,7 @@ public class JwtProvider {
     @Value("${eintrusty.app.jwtSecret}")
     private String jwtSecret;
  
-    @Value("${eintrustz.app.jwtExpiration}")
+    @Value("${eintrusty.app.jwtExpiration}")
     private int jwtExpiration;
  
     public String generateJwtToken(Authentication authentication) {

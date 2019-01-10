@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,14 +20,16 @@ import com.eintrusty.service.IUserLoginService;
 import com.eintrusty.utility.StringUtil;
 import com.eintrusty.variable.VConstant;
 
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("user")
+@RequestMapping("/api/auth")
 public class UserLoginController {
 
 	@Autowired
 	private IUserLoginService userService;
 
-	@GetMapping(value = "all")
+	@GetMapping(value = "user/all")
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<List<UserLoginDto>> getAllUSerLogin() {
 		Map<String, Object> datas = userService.findAllUserLogin();
 		if (datas.get("error") == null) {
@@ -39,7 +42,8 @@ public class UserLoginController {
 
 	}
 
-	@PostMapping(value = "save")
+	@PostMapping(value = "user/save")
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<DataRest> saveUserLogin(@RequestBody UserLoginDto user) {
 		DataRest dataRest = new DataRest();
 		try {
@@ -52,7 +56,31 @@ public class UserLoginController {
 		}
 
 	}
+	@PostMapping(value = "registration")
+	public ResponseEntity<DataRest> registration(@RequestBody UserLoginDto userRegister){
+		DataRest dataRest = new DataRest();
+		try{
+			Map<String, Object> dataMap = userService.createUserLogin(userRegister);
+			if(dataMap !=null){
+				dataRest.setMessage(VConstant.MESSAGESTATUSOK);
+				return new ResponseEntity<DataRest>(dataRest, HttpStatus.OK);
+			}
+			String error = (String) dataMap.get("ERROR");
+			dataRest.setMessage(VConstant.MESSAGESTATUSERROR);
+			return new ResponseEntity<DataRest>(dataRest, HttpStatus.OK);
+			
+			
+		}catch(Exception e){
+			dataRest.setMessage(VConstant.MESSAGESTATUSERROR);
+			return new ResponseEntity<DataRest>(dataRest, HttpStatus.OK);
+		}
+		
+	}
 
+	
+	
+	
+	
 	@PostMapping(value = "login", produces = "application/json")
 	public ResponseEntity<UserLoginDto> loginUser(@RequestBody UserLoginDto user) {
 		Map<String, Object> datasMap = userService.login(user);
@@ -60,9 +88,7 @@ public class UserLoginController {
 		try {
 
 			if (datasMap.get("data") != null) {
-				userDto = (UserLoginDto) datasMap.get("data");
-				
-						
+				userDto = (UserLoginDto) datasMap.get("data");		
 
 			} else if (datasMap.get("no data") != null) {
 				userDto.setUsername((String) datasMap.get("no data"));
@@ -80,7 +106,7 @@ public class UserLoginController {
 		}
 
 	}
-	@GetMapping("/test/admin")
+	@GetMapping("user/admin")
 	@PreAuthorize("hasRole('ADMIN')")
 	public String adminAccess() {
 		return ">>> Admin Contents";
